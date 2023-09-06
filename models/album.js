@@ -3,6 +3,11 @@ const Joi = require("joi");
 
 // Album Schema
 const albumSchema = new mongoose.Schema({
+    _id: {
+        type: Number,
+        required: true,
+        min: 0
+    },
     title: {
         type: String,
         required: true,
@@ -28,6 +33,7 @@ const Album = mongoose.model('Album', albumSchema);
 // Validate 
 function validateAlbum(Album) {
     const schema = Joi.object({
+        _id: Joi.number().min(0).required(),
         name: Joi.string().min(3).max(50).required(),
         artist: Joi.string().min(3).max(50).required(),
         year: Joi.number().min(0).required()
