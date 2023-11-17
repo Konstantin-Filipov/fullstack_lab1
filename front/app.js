@@ -39,10 +39,11 @@ async function generateAlbumTable() {
 
 
 async function deleteAlbum(ele) {
+    console.log("delete btn Clicked! ")
     const albumId = ele.parentElement.parentElement.firstChild.textContent;
     console.log(albumId);
-    const response = await deleteData(albumId);
-    const data = await response.json()
+    const response = await deleteAlbumData(Number(albumId)); // Convert to number
+    const data = await response.json();
 
     infoDisplay.innerHTML = (response.status !== 200) ? data.error : '';
 
@@ -56,12 +57,11 @@ async function getAlbums() {
         .then(response => response.json());
 }
 
-async function deleteData(albumId) {
+async function deleteAlbumData(albumId) {
     return await fetch(`api/albums/${albumId}`, {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
     });
-    
 }

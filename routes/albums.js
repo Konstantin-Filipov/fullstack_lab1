@@ -13,20 +13,27 @@ router.get('/', async (req, res) => {
 
 // Delete an album
 router.delete('/:id', async (req, res) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ error: 'Not a valid ID format.' })
+    if (isNaN(req.params.id)) {
+        return res.status(400).json({ error: 'Not a valid ID format.' });
+    }
 
-    const album = await Album.findByIdAndRemove(req.params.id);
-    if (!album) return res.status(404).json({ error: 'No match for the ID.' });
+    const album = await Album.findOneAndRemove({ _id: req.params.id });
+    
+    if (!album) {
+        return res.status(404).json({ error: 'No match for the ID.' });
+    }
 
     res.status(200).json(album);
 });
 
 // Get a user
+// Get a specific album by ID
 router.get('/:id', async (req, res) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ error: 'Not a valid ID format.' })
-
     const album = await Album.findById(req.params.id);
-    if (!album) return res.status(404).json({error: 'No match for the ID.' });
+
+    if (!album) {
+        return res.status(404).json({ error: 'No match for the ID.' });
+    }
 
     res.status(200).json(album);
 });
