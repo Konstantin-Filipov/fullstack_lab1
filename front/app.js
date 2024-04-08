@@ -50,6 +50,49 @@ async function deleteAlbum(ele) {
     await generateAlbumTable();
 }
 
+async function createAlbum(){
+    let albumTitle = document.getElementById("input-album-title").value
+    let albumArtist = document.getElementById("input-album-artist").value
+    let albumYear = document.getElementById("input-album-year").value
+    
+    if (albumTitle != "" && albumArtist != "" && albumYear != null){
+        infoDisplay.innerHTML = "Album created!"
+        console.log("Album Created!")
+        console.log(`Alum name: ${albumTitle}`)
+        console.log(`Alum artist: ${albumArtist}`)
+        console.log(`Alum year: ${albumYear}`)
+
+        // Create an object with the album data
+        const albumBody = {
+            title: albumTitle,
+            artist: albumArtist,
+            year: albumYear
+        };
+
+         // postAlbum function with the album data
+         const response = await postAlbum(albumBody);
+         if (response.status === 201) {
+            console.log("Album successfully created!");
+            
+            //update render state of the albums list on the screen 
+            await generateAlbumTable();
+
+        } else {
+            const data = await response.json();
+            infoDisplay.innerHTML = data.error || "Error creating the album.";
+            console.error("Error creating the album:", data.error || response.statusText);
+        }
+
+        //clear input fields after creating the album
+        document.getElementById("input-album-title").value = "";
+        document.getElementById("input-album-artist").value = "";
+        document.getElementById("input-album-year").value = "";
+
+    }
+    else{
+        infoDisplay.innerHTML = "Please fill in all fields"
+    }
+}
 
 //--------------controllers--------------
 async function getAlbums() {
@@ -63,5 +106,15 @@ async function deleteAlbumData(albumId) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
+    });
+}
+
+async function postAlbum(albumBody){
+    return await fetch(`api/albums/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: JSON.stringify(albumBody)
     });
 }

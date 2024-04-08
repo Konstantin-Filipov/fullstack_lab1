@@ -38,4 +38,29 @@ router.get('/:id', async (req, res) => {
     res.status(200).json(album);
 });
 
+router.post('/', async (req, res) => {
+    const { title, artist, year } = req.body;
+    if (!title || !artist || !year) {
+        return res.status(400).json({ error: 'Please provide title, artist, and year for the album.' });
+    }
+    try {
+        // Create a new album instance
+        const newAlbum = new Album({
+            
+            title: title,
+            artist: artist,
+            year: year
+        });
+
+        // Save the new album to the database
+        const savedAlbum = await newAlbum.save();
+
+        // Return the saved album in the response
+        res.status(201).json(savedAlbum);
+    } catch (error) {
+        console.error('Error creating the album:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+});
 module.exports = router;
