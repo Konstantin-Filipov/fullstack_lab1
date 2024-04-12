@@ -1,92 +1,117 @@
 
-window.onload = generateAlbumTable;
-const infoDisplay = document.getElementById('album-creation-error');
+window.onload = generateRecipeTable;
+const infoDisplay = document.getElementById('recipe-creation-error');
 
-async function generateAlbumTable() {
-    let myTable = document.getElementById('album-table');
+async function generateRecipeTable() {
+    let myTable = document.getElementById('recipe-table');
     myTable.innerHTML = `
-        <tr><th colspan="6">Albums</th></tr>
+        <tr><th colspan="6">Recipes</th></tr>
         <tr>
-            <th>Album ID</th>
             <th>Title</th>
-            <th>Artist</th>
-            <th>Year</th>
+            <th>Ingridients</th>
+            <th>Instructions</th>
+            <th>Cooking Time</th>
             <th>Edit</th>
             <th>Delete</th>
-
         </tr>`;
 
-    const data = await getAlbums()
+    const data = await getRecipes()
     data.forEach(element => {
         let newRow = document.createElement("tr");
-        Object.values(element).forEach((value) => {
-           let cell = document.createElement("td");
-           cell.innerText = String(value);
-           newRow.appendChild(cell);
+        newRow.id = `recipe-${element._id}`; // Set ID for the row
+        Object.keys(element).forEach((key) => {
+            if (key !== "_id") {
+                let cell = document.createElement("td");
+                cell.innerText = String(element[key]);
+                newRow.appendChild(cell);
+            }
         });
 
-        const editAlbum = document.createElement("td")
-        editAlbum.innerHTML = `<button type="button" onclick="generateEditAlbumField(this)">Edit</button>`;
-        newRow.appendChild(editAlbum);
+        const editRecipe = document.createElement("td")
+        editRecipe.innerHTML = `<button type="button" onclick="generateEditRecipeField(this)">Edit</button>`;
+        newRow.appendChild(editRecipe);
 
-        const deleteAlbum = document.createElement("td")
-        deleteAlbum.innerHTML = `<button type="button" onclick="deleteAlbum(this)">Delete</button>`;
-        newRow.appendChild(deleteAlbum);
+        const deleteRecipe = document.createElement("td")
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.innerText = "Delete";
+        deleteButton.onclick = function() {
+            showDeleteConfirmation(element._id);
+        };
+        deleteRecipe.appendChild(deleteButton);
+        newRow.appendChild(deleteRecipe);
 
         myTable.appendChild(newRow);
     });
 }
 
+let isConfirmationWindowOpen = false; //flag for confirmation window 
 
-async function deleteAlbum(ele) {
-    console.log("delete btn Clicked! ")
-    const albumId = ele.parentElement.parentElement.firstChild.textContent;
-    console.log(albumId);
-    const response = await deleteAlbumData(Number(albumId)); // Convert to number
-    const data = await response.json();
-
-    infoDisplay.innerHTML = (response.status !== 200) ? data.error : '';
-
-    await generateAlbumTable();
+function showDeleteConfirmation(recipeId) {
+    // Create delete confirmation window
+    if (!isConfirmationWindowOpen) {
+        // Create delete confirmation window
+        const confirmationWindow = document.createElement("div");
+        confirmationWindow.className = "confirmation-window";
+        confirmationWindow.innerHTML = `
+            <p>Are you sure you want to delete this recipe?</p>
+            <button class="cancel-button" onclick="closeConfirmationWindow()">Cancel</button>
+            <button class="delete-button" onclick="deleteRecipe('${recipeId}')">Delete</button>
+        `;
+        document.body.appendChild(confirmationWindow);
+        
+        // Set the flag to indicate that the confirmation window is open
+        isConfirmationWindowOpen = true;
+    }
 }
 
-async function createAlbum(){
-    let albumTitle = document.getElementById("input-album-title").value
-    let albumArtist = document.getElementById("input-album-artist").value
-    let albumYear = document.getElementById("input-album-year").value
-    
-    if (albumTitle != "" && albumArtist != "" && albumYear != null){
-        infoDisplay.innerHTML = "Album created!"
-        console.log("Album Created!")
-        console.log(`Alum name: ${albumTitle}`)
-        console.log(`Alum artist: ${albumArtist}`)
-        console.log(`Alum year: ${albumYear}`)
+function closeConfirmationWindow() {
+    const confirmationWindow = document.querySelector(".confirmation-window");
+    if (confirmationWindow) {
+        confirmationWindow.remove();
+    }
+    //set confirmation window flag to false
+    isConfirmationWindowOpen = false;
+}
 
-        // Create an object with the album data
-        const albumBody = {
-            title: albumTitle,
-            artist: albumArtist,
-            year: albumYear
+
+async function createRecipe(){
+    let recipeTitle = document.getElementById("input-recipe-title").value
+    let recipeDescription = document.getElementById("input-recipe-description").value
+    let recipeIngridients = document.getElementById("input-recipe-ingridients").value
+    
+    if (recipeTitle != "" && recipeDescription != "" && recipeIngridients != ""){
+        infoDisplay.innerHTML = "Recipe created!"
+        console.log("Recipe Created!")
+        console.log(`Recipe title: ${recipeTitle}`)
+        console.log(`Recipe artist: ${recipeDescription}`)
+        console.log(`Recipe ingridients: ${recipeIngridients}`)
+
+        // Create an object with the recipe data
+        const recipeBody = {
+            title: recipeTitle,
+            description: recipeDescription,
+            ingridients: recipeIngridients
         };
 
-         // postAlbum function with the album data
-         const response = await postAlbum(albumBody);
+         // postAlbum function with the recipe data
+         const response = await postRecipe(recipeBody);
          if (response.status === 201) {
-            console.log("Album successfully created!");
+            console.log("Recipe successfully created!");
             
-            //update render state of the albums list on the screen 
-            await generateAlbumTable();
+            //update render state of the recipes list on the screen 
+            await generateRecipeTable();
 
         } else {
             const data = await response.json();
-            infoDisplay.innerHTML = data.error || "Error creating the album.";
-            console.error("Error creating the album:", data.error || response.statusText);
+            infoDisplay.innerHTML = data.error || "Error creating the recipe.";
+            console.error("Error creating the recipe:", data.error || response.statusText);
         }
 
-        //clear input fields after creating the album
-        document.getElementById("input-album-title").value = "";
-        document.getElementById("input-album-artist").value = "";
-        document.getElementById("input-album-year").value = "";
+        //clear input fields after creating the recipe
+        document.getElementById("input-recipe-title").value = "";
+        document.getElementById("input-recipe-description").value = "";
+        document.getElementById("input-recipe-ingridients").value = "";
 
     }
     else{
@@ -95,26 +120,34 @@ async function createAlbum(){
 }
 
 //--------------controllers--------------
-async function getAlbums() {
-    return await fetch('api/albums/')
+async function getRecipes() {
+    return await fetch('api/recipes/')
         .then(response => response.json());
 }
 
-async function deleteAlbumData(albumId) {
-    return await fetch(`api/albums/${albumId}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+async function deleteRecipe(recipeId) {
+    try {
+        await fetch(`/api/recipes/${recipeId}`, {
+            method: 'DELETE'
+        });
+        // Remove the corresponding row from the table
+        const rowToDelete = document.getElementById(`recipe-${recipeId}`);
+        if (rowToDelete) {
+            rowToDelete.remove();
         }
-    });
+        // Close the confirmation window
+        closeConfirmationWindow();
+    } catch (error) {
+        console.error("Error deleting recipe:", error);
+    }
 }
 
-async function postAlbum(albumBody){
-    return await fetch(`api/albums/`, {
+async function postRecipe(recipeBody){
+    return await fetch(`api/recipes/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: JSON.stringify(albumBody)
+        body: JSON.stringify(recipeBody)
     });
 }

@@ -1,7 +1,6 @@
 require('dotenv').config();
 
-const albums = require('./routes/albums');
-const home = require('./routes/home');
+const recipes = require('./routes/recipes');
 const mongoose = require("mongoose");
 const express = require('express');
 const app = express();
@@ -15,8 +14,8 @@ mongoose.connect(process.env.CONNECTION_URL, {useNewUrlParser: true, useUnifiedT
 app.use(express.json());
 app.use(express.static('front'));
 
-app.use('/api/albums', albums);
-//app.use('/', home);
+app.use('/api/recipes', recipes);
+
 
 
 //listen to port- {PORT}
