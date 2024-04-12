@@ -71,4 +71,35 @@ router.post('/', async (req, res) => {
     }
 
 });
+
+// Route to handle updating a recipe by ID
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { title, ingridients, instructions, cookingTime } = req.body;
+
+    try {
+        // Find the recipe by ID
+        const recipe = await Recipe.findById(id);
+
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found' });
+        }
+
+        // Update the recipe properties
+        recipe.title = title;
+        recipe.ingridients = ingridients;
+        recipe.instructions = instructions;
+        recipe.cookingTime = cookingTime;
+
+        // Save the updated recipe
+        await recipe.save();
+
+        // Respond with the updated recipe
+        res.status(200).json(recipe);
+    } catch (error) {
+        console.error('Error updating recipe:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 module.exports = router;
