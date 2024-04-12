@@ -18,11 +18,13 @@
         <div>
             <form id="create-recipe-form" class="form-control">
                 <label for="recipe-title"></label>
-                <input type="text" id="input-recipe-title" placeholder="recipe title here">
-                <label for="recipe-desciption"></label>
-                <input type="text" id="input-recipe-description" placeholder="recipe description here">
+                <input type="text" id="input-recipe-title" placeholder="recipe title">
                 <label for="recipe-ingridients"></label>
-                <input type="text" id="input-recipe-ingridients" placeholder="recipe ingridients here">
+                <input type="text" id="input-recipe-ingridients" placeholder="recipe ingridients">
+                <label for="recipe-instructions"></label>
+                <input type="text" id="input-recipe-instructions" placeholder="recipe instructions">
+                <label for="recipe-cookingTime"></label>
+                <input type="number" id="input-recipe-cookingTime" placeholder="time [min]">
                 <button type="submit" id="button-recipe-create" onclick="createRecipe(this)">Create</button>
             </form>
         </div>

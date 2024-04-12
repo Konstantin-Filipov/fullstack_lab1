@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { Recipe, validate } = require('../models/recipe')
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Get all the recipes
 router.get('/', async (req, res) => {
     const recipes = await Recipe
         .find()
-        .select({ _id: 1, title: 1, description: 1 , ingridients: 1});
+        .select({ _id: 1, title: 1, ingridients: 1 , instructions: 1, cookingTime: 1});
     res.send(recipes);
 });
 
@@ -45,17 +45,19 @@ router.delete('/:id', async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    const { title, desciption, ingridients } = req.body;
-    if (!title || !desciption || !ingridients) {
-        return res.status(400).json({ error: 'Please provide title, desciption and ingridients for the recipe.' });
+    const { title, ingridients, instructions, cookingTime } = req.body;
+    if (!title || !ingridients || !instructions || !cookingTime) {
+        return res.status(400).json({ error: 'Please provide title, ingridients, instructions and cooking time for the recipe.' });
     }
     try {
+        const _id = new mongoose.Types.ObjectId()
         // Create a new album instance
         const newRecipe = new Recipe({
-            
+            _id: _id,
             title: title,
-            description: description,
-            ingridients: ingridients
+            ingridients: ingridients,
+            instructions: instructions,
+            cookingTime: cookingTime
         });
 
         // Save the new album to the database
@@ -64,7 +66,7 @@ router.post('/', async (req, res) => {
         // Return the saved album in the response
         res.status(201).json(saveRecipe);
     } catch (error) {
-        console.error('Error creating the recipe:', error);
+        console.error('Error creating the recipe in post method:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 

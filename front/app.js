@@ -21,9 +21,17 @@ async function generateRecipeTable() {
         newRow.id = `recipe-${element._id}`; // Set ID for the row
         Object.keys(element).forEach((key) => {
             if (key !== "_id") {
-                let cell = document.createElement("td");
-                cell.innerText = String(element[key]);
-                newRow.appendChild(cell);
+                if (key == "cookingTime"){
+                    let cell = document.createElement("td");
+                    let cookingTimeText = `${element[key]} min`;
+                    cell.innerText = cookingTimeText;
+                    newRow.appendChild(cell);
+                }
+                else{
+                    let cell = document.createElement("td");
+                    cell.innerText = String(element[key]);
+                    newRow.appendChild(cell);
+                }
             }
         });
 
@@ -77,41 +85,52 @@ function closeConfirmationWindow() {
 
 async function createRecipe(){
     let recipeTitle = document.getElementById("input-recipe-title").value
-    let recipeDescription = document.getElementById("input-recipe-description").value
     let recipeIngridients = document.getElementById("input-recipe-ingridients").value
+    let recipeInstructions = document.getElementById("input-recipe-instructions").value
+    let recipeCookingTime = document.getElementById("input-recipe-cookingTime").value
     
-    if (recipeTitle != "" && recipeDescription != "" && recipeIngridients != ""){
+    if (recipeTitle != "" && recipeIngridients != "" && recipeInstructions != "" && recipeCookingTime != null){
         infoDisplay.innerHTML = "Recipe created!"
         console.log("Recipe Created!")
         console.log(`Recipe title: ${recipeTitle}`)
-        console.log(`Recipe artist: ${recipeDescription}`)
         console.log(`Recipe ingridients: ${recipeIngridients}`)
+        console.log(`Recipe instructions: ${recipeInstructions}`)
+        console.log(`Recipe cookingTime: ${recipeCookingTime}`)
 
+        // Generate a new ObjectId for _id field
+        ;
         // Create an object with the recipe data
         const recipeBody = {
             title: recipeTitle,
-            description: recipeDescription,
-            ingridients: recipeIngridients
+            ingridients: recipeIngridients,
+            instructions: recipeInstructions,
+            cookingTime: recipeCookingTime
         };
 
-         // postAlbum function with the recipe data
-         const response = await postRecipe(recipeBody);
-         if (response.status === 201) {
-            console.log("Recipe successfully created!");
-            
-            //update render state of the recipes list on the screen 
-            await generateRecipeTable();
-
-        } else {
-            const data = await response.json();
-            infoDisplay.innerHTML = data.error || "Error creating the recipe.";
-            console.error("Error creating the recipe:", data.error || response.statusText);
+        try{
+            // postAlbum function with the recipe data
+            const response = await postRecipe(recipeBody);
+            if (response.status === 201) {
+                console.log("Recipe successfully created!");
+                
+                //update render state of the recipes list on the screen 
+                await generateRecipeTable();
+    
+            } else {
+                const data = await response.json();
+                infoDisplay.innerHTML = data.error || "Error creating the recipe.";
+                console.error("Error creating the recipe in else :", data.error || response.statusText);
+            }
+        }catch (error){
+            console.error("Error creating recipe in catch:", error);
+            infoDisplay.innerHTML = "Error creating the recipe in catch.";
         }
 
         //clear input fields after creating the recipe
         document.getElementById("input-recipe-title").value = "";
-        document.getElementById("input-recipe-description").value = "";
         document.getElementById("input-recipe-ingridients").value = "";
+        document.getElementById("input-recipe-instructions").value = "";
+        document.getElementById("input-recipe-cookingTime").value = null;
 
     }
     else{
@@ -143,11 +162,17 @@ async function deleteRecipe(recipeId) {
 }
 
 async function postRecipe(recipeBody){
-    return await fetch(`api/recipes/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: JSON.stringify(recipeBody)
-    });
+    try{
+        const response = await fetch(`api/recipes/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(recipeBody)
+        });
+        return response;
+    }catch (error) {
+        console.error("Error creating recipe in postRecipe function:", error);
+        throw error;
+    }
 }
