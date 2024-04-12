@@ -58,10 +58,12 @@ async function generateRecipeTable() {
 //---------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------for edit functionality-----------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------
-let isEditFormOpen = false; //flag for confirmation window 
 
 function generateEditRecipeField(element) {
-    
+    // Disable the edit button
+    const editButton = document.querySelector(`#recipe-${element._id} button`);
+    editButton.disabled = true;
+
     // Create form elements
     const form = document.createElement('form');
     const titleInput = createInput('title', element.title);
@@ -84,7 +86,7 @@ function generateEditRecipeField(element) {
     const discardButton = document.createElement('button');
     discardButton.type = 'button';
     discardButton.textContent = 'Discard';
-    discardButton.onclick = () => discardRecipeChanges(form); // Call a function to discard changes when Discard button is clicked
+    discardButton.onclick = () => discardRecipeChanges(form, editButton); // Call a function to discard changes when Discard button is clicked
 
     // Append Save and Discard buttons to the form
     form.appendChild(saveButton);
@@ -109,7 +111,10 @@ function createInput(name, value) {
 }
 
 //discard button 
-function discardRecipeChanges(form) {
+function discardRecipeChanges(form,editButton) {
+    //re-enable edit button
+    editButton.disabled = false;
+
     // Remove the form from the DOM
     form.remove();
 }
@@ -176,6 +181,9 @@ function updateRecipeUI(recipeId, form, updatedRecipe) {
     };
     deleteRecipe.appendChild(deleteButton);
     row.appendChild(deleteRecipe);
+
+    // Re-enable the edit button
+    editButton.disabled = false;
 
     // Remove the form from the DOM
     form.remove();
