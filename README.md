@@ -9,50 +9,37 @@ This project is a Recipe Management System that allows users to create, edit, vi
 - Edit an existing recipe
 - Delete a recipe
 
-## Installation
+## Installation & Setup
 
 1. Clone the repository:
 
 ```bash
 git clone <repository-url>
 cd recipe-management-system
-
-    Install dependencies for the frontend and backend:
-
-bash
-
-# Install frontend dependencies
+````
+2. Install dependencies for the frontend and backend:
+```bash
 cd frontend
 npm install
-
-# Install backend dependencies
-cd ../backend
-npm install
-
-    Set up environment variables:
+```
+3. Set up environment variables:
 
 Create a .env file in the backend directory and add the following variables:
 
-makefile
-
+```makefile
 PORT=3000
 MONGODB_URI=<your-mongodb-uri>
-
+```
 Replace <your-mongodb-uri> with the URI of your MongoDB database.
 
-    Start the frontend and backend servers:
-
-bash
-
+4. Start the frontend and backend servers:
+```bash
 # Start the frontend server
-cd ../frontend
-npm start
+cd ../<directory of package.json>
+npm run dev
+```
 
-# Start the backend server
-cd ../backend
-npm start
-
-Usage
+## Usage
 
     Open your web browser and navigate to http://localhost:3000 to access the Recipe Management System.
 
@@ -63,7 +50,7 @@ Usage
     Edit an existing recipe: Click the "Edit" button next to a recipe to modify its details.
     Delete a recipe: Click the "Delete" button next to a recipe to remove it from the system.
 
-Contributing
+## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
 
