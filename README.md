@@ -47,10 +47,10 @@ Open your web browser and navigate to http://localhost:3000 to access the Recipe
 
 You can perform the following actions:
 
-View a list of recipes: The homepage displays a list of recipes with details such as title, ingredients, instructions, and cooking time.
-Create a new recipe: Click the "Create Recipe" button to add a new recipe.
-Edit an existing recipe: Click the "Edit" button next to a recipe to modify its details.
-Delete a recipe: Click the "Delete" button next to a recipe to remove it from the system.
+- View a list of recipes: The homepage displays a list of recipes with details such as title, ingredients, instructions, and cooking time.
+- Create a new recipe: Click the "Create Recipe" button to add a new recipe.
+- Edit an existing recipe: Click the "Edit" button next to a recipe to modify its details.
+- Delete a recipe: Click the "Delete" button next to a recipe to remove it from the system.
 
 ## Contributing
 
