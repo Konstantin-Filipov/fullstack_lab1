@@ -18,6 +18,7 @@ git clone <repository-url>
 cd recipe-management-system
 ````
 2. Install dependencies for the frontend and backend:
+
 ```bash
 cd frontend
 npm install
@@ -34,6 +35,7 @@ Replace <your-mongodb-uri> with the URI of your MongoDB database.
 
 4. Start the frontend and backend servers:
 ```bash
+
 # Start the frontend server
 cd ../<directory of package.json>
 npm run dev
@@ -41,22 +43,22 @@ npm run dev
 
 ## Usage
 
-    Open your web browser and navigate to http://localhost:3000 to access the Recipe Management System.
+Open your web browser and navigate to http://localhost:3000 to access the Recipe Management System.
 
-    You can perform the following actions:
+You can perform the following actions:
 
-    View a list of recipes: The homepage displays a list of recipes with details such as title, ingredients, instructions, and cooking time.
-    Create a new recipe: Click the "Create Recipe" button to add a new recipe.
-    Edit an existing recipe: Click the "Edit" button next to a recipe to modify its details.
-    Delete a recipe: Click the "Delete" button next to a recipe to remove it from the system.
+View a list of recipes: The homepage displays a list of recipes with details such as title, ingredients, instructions, and cooking time.
+Create a new recipe: Click the "Create Recipe" button to add a new recipe.
+Edit an existing recipe: Click the "Edit" button next to a recipe to modify its details.
+Delete a recipe: Click the "Delete" button next to a recipe to remove it from the system.
 
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
 
-    Fork the repository
-    Create a new branch (git checkout -b feature)
-    Make your changes
-    Commit your changes (git commit -am 'Add new feature')
-    Push to the branch (git push origin feature)
-    Create a new Pull Request
+- Fork the repository
+- Create a new branch (git checkout -b feature)
+- Make your changes
+- Commit your changes (git commit -am 'Add new feature')
+- Push to the branch (git push origin feature)
+- Create a new Pull Request
