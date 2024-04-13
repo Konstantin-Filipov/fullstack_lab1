@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Recipe, validate } = require('../models/recipe')
+const { Recipe } = require('../models/recipe')
 const mongoose = require('mongoose');
 
 // Get all the recipes
@@ -11,18 +11,25 @@ router.get('/', async (req, res) => {
     res.send(recipes);
 });
 
-// Get a specific recipe by ID
-router.get('/:id', async (req, res) => {
-    const recipe = await Recipe.findById(req.params.id);
+// Get a specific recipe by title
+router.get('/title/:title', async (req, res) => {
+    const title = req.params.title;
 
-    if (!recipe) {
-        return res.status(404).json({ error: 'No match for the ID.' });
+    try {
+        const recipe = await Recipe.findOne({ title });
+
+        if (!recipe) {
+            return res.status(404).json({ error: 'No match for the title.' });
+        }
+
+        res.status(200).json(recipe);
+    } catch (error) {
+        console.error('Error retrieving recipe by title:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-
-    res.status(200).json(recipe);
 });
 
-// Delete a recipe
+// Delete a recipe by id
 router.delete('/:id', async (req, res) => {
     console.log("Deleting recipe with ID:", req.params.id); // Log the ID
 
@@ -43,7 +50,7 @@ router.delete('/:id', async (req, res) => {
     res.status(200).json(recipe);
 });
 
-
+//make post req with new entry
 router.post('/', async (req, res) => {
     const { title, ingridients, instructions, cookingTime } = req.body;
     if (!title || !ingridients || !instructions || !cookingTime) {
@@ -72,7 +79,7 @@ router.post('/', async (req, res) => {
 
 });
 
-// Route to handle updating a recipe by ID
+// update a recipe by ID
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { title, ingridients, instructions, cookingTime } = req.body;
