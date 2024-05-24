@@ -34,11 +34,26 @@ async function generateRecipeTable() {
         });
         myTable.appendChild(newRow);
 
-        const editRecipe = document.createElement("td")
-        editRecipe.innerHTML = `<button type="Button">Edit</button>`;
-        editRecipe.querySelector('button').addEventListener('click', function() {
-            generateEditRecipeField(element);
-        });
+        // const editRecipe = document.createElement("td")
+        // editRecipe.innerHTML = `<button type="Button">Edit</button>`;
+        // editRecipe.querySelector('button').addEventListener('click', function() {
+        //     generateEditRecipeField(element);
+        // });
+        // newRow.appendChild(editRecipe);
+
+        const editRecipe = document.createElement("td");
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.id = `edit-${element._id}`; // Assign unique ID to the edit button
+        editButton.innerText = "Edit";
+        /*
+        editButton.addEventListener('click', function() {
+            console.log(element, editButton.id);
+            generateEditRecipeField(element, editButton.id);
+            
+        });*/
+
+        editRecipe.appendChild(editButton);
         newRow.appendChild(editRecipe);
 
         const deleteRecipe = document.createElement("td")
@@ -55,14 +70,38 @@ async function generateRecipeTable() {
     });
 }
 
+
+// Event listener for edit buttons
+document.getElementById('recipe-table').addEventListener('click', async function(event) {
+    const target = event.target;
+    if (target.tagName === 'BUTTON' && target.id.startsWith('edit-')) {
+        console.log("sss", target);
+        const recipeData = await getRecipes()
+        const elementId = target.id.replace('edit-', '');
+        const element = recipeData.find(recipe => recipe._id === elementId);
+        if (element) {
+            console.log(element, target.id);
+            generateEditRecipeField(element, target.id);
+        }
+    }
+});
+
 //---------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------for edit functionality-----------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------
 
-function generateEditRecipeField(element) {
+function generateEditRecipeField(element, editButtonId) {
     // Disable the edit button
-    const editButton = document.querySelector(`#recipe-${element._id} button`);
-    editButton.disabled = true;
+    const editButton = document.getElementById(editButtonId);
+    console.log(editButton, editButtonId);
+    if (editButton) {
+        editButton.disabled = true;
+    } else {
+        // Debug: Log a message if the edit button is not found
+        console.error(`Edit button not found with ID: ${editButtonId}`);
+        return; // Exit the function if the button is not found
+    }
+
 
     // Create form elements
     const form = document.createElement('form');
@@ -81,7 +120,7 @@ function generateEditRecipeField(element) {
     const saveButton = document.createElement('button');
     saveButton.type = 'button';
     saveButton.textContent = 'Save';
-    saveButton.onclick = () => saveRecipeChanges(element._id, form); // Call a function to save changes when Save button is clicked
+    saveButton.onclick = () => saveRecipeChanges(element._id, form, editButtonId); // Call a function to save changes when Save button is clicked
 
     const discardButton = document.createElement('button');
     discardButton.type = 'button';
@@ -120,7 +159,7 @@ function discardRecipeChanges(form,editButton) {
 }
 
 // Function to handle saving changes to the recipe
-async function saveRecipeChanges(recipeId, form) {
+async function saveRecipeChanges(recipeId, form, editButtonId) {
     // Extract the updated data from the form
     const updatedRecipe = {
         title: form.querySelector('input[name="title"]').value,
@@ -130,14 +169,14 @@ async function saveRecipeChanges(recipeId, form) {
     };
 
     // Update the UI and remove the form
-    updateRecipeUI(recipeId, form, updatedRecipe);
+    updateRecipeUI(recipeId, form, updatedRecipe, editButtonId);
 
     // Send a POST request to update the recipe on the backend
     await updateRecipe(recipeId, updatedRecipe);
 }
 
 // Function to update the UI and remove the form
-function updateRecipeUI(recipeId, form, updatedRecipe) {
+function updateRecipeUI(recipeId, form, updatedRecipe, editButtonId) {
     // Update the row content with the new data
     const row = document.getElementById(`recipe-${recipeId}`);
     row.innerHTML = ''; // Clear existing content
@@ -165,10 +204,11 @@ function updateRecipeUI(recipeId, form, updatedRecipe) {
     const editRecipe = document.createElement("td");
     const editButton = document.createElement("button");
     editButton.type = "button";
+    editButton.id = editButtonId; // Assign unique ID to the new edit button
     editButton.innerText = "Edit";
-    editButton.addEventListener("click", function() {
-        generateEditRecipeField(updatedRecipe);
-    });
+    // editButton.addEventListener("click", function() {
+    //     generateEditRecipeField(updatedRecipe);
+    // });
     editRecipe.appendChild(editButton);
     row.appendChild(editRecipe);
 
@@ -278,7 +318,7 @@ async function createRecipe(){
 }
 
 //-------------------------------------------------------------------------------------------------------------
-//--------------------------------------------Controllers------------------------------------------------------
+//--------------------------------------------API handlers------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 async function getRecipes() {
     return await fetch('api/recipes/')
