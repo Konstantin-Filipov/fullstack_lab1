@@ -206,9 +206,6 @@ function updateRecipeUI(recipeId, form, updatedRecipe, editButtonId) {
     editButton.type = "button";
     editButton.id = editButtonId; // Assign unique ID to the new edit button
     editButton.innerText = "Edit";
-    // editButton.addEventListener("click", function() {
-    //     generateEditRecipeField(updatedRecipe);
-    // });
     editRecipe.appendChild(editButton);
     row.appendChild(editRecipe);
 
